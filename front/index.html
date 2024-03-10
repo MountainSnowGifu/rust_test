@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>サンプル</title>
+    <meta charset="utf-8">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+
+    <style>
+    div#paging
+    {
+      text-align: center;
+      /* スクロールに対してページングボックスの位置を固定 */
+      position: fixed;
+      /* 位置を指定 */
+      bottom: 0;
+      right:45%;
+    }
+
+    div#pagingbox{
+      background: #FFF;
+    }
+
+    th{
+      /* ヘッダ背景塗りつぶし */
+      background: #eee;
+    }
+   th,td {
+     /* 枠線を1本線指定 */
+      border: solid 1px;
+      width:auto;
+   }
+
+   table{
+     /* 枠線を1本線指定 */
+      border: solid 1px;
+      border-collapse:  collapse;
+      white-space: nowrap;
+    }
+
+    footer{
+      position: fixed;
+      width: 100%;
+      background-color: #C0C0C0;
+      padding: 15px 0;
+      bottom: 0; /*下に固定*/
+    }
+    </style>
+
+  </head>
+
+
+
+
+  <body>
+    <!--テーブル生成位置-->
+    <div id ='maintable'></div>
+
+
+
+    <!--ページングボタン配置-->
+    <footer>
+      <div id="paging">
+        <table>
+          <tr>
+            <tb><button id="prevbtn" type="button"><</button></tb>
+              <tb>
+                <span id="currentpage">currentpage</span>
+                  /
+                <span id="lastpage">lastpage</span>
+              </tb>
+            <tb><button id="nextbtn" type="button">></button></tb>
+          </tr>
+        </table>
+      </div>
+    </footer>
+
+
+    <script>
+
+function getRequestToLocalhost() {
+        const memberList = document.getElementById("memberList");
+        const promise = fetch('http://localhost:4000/json');
+
+            //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
+            promise.then((response) => {
+            return response.json();
+            })
+            .then((data) => {
+            console.log(data);
+            return data; 
+            });
+    }
+
+        var json = getRequestToLocalhost();
+        console.log(json);
+
+    // var json =[     //jsonサンプルデータ
+    //   {
+    //     "順位":1 ,"氏名":"王貞治" , "本数":868
+    //   }
+    //   ,
+    //   {
+    //     "順位":2 ,"氏名":"野村克也" ,"本数":657
+    //   }
+    //   ,
+    //   {
+    //     "順位":3 ,"氏名":"門田博光" ,"本数":567
+    //   }
+    //   ,
+    //   {
+    //     "順位":4 ,"氏名":"山本浩二" ,"本数":536
+    //   }
+    //   ,
+    //   {
+    //     "順位":5 ,"氏名":"清原和博" ,"本数":525
+    //   }
+    // ]
+
+      // table要素を生成
+      var table = document.createElement('table');
+
+      // ヘッダーを作成
+      var tr = document.createElement('tr');
+      for (key in json[0]) {
+            // th要素を生成
+            var th = document.createElement('th');
+            // th要素内にテキストを追加
+            th.textContent = key;
+            // th要素をtr要素の子要素に追加
+            tr.appendChild(th);
+            }
+        // tr要素をtable要素の子要素に追加
+        table.appendChild(tr);
+
+      // テーブル本体を作成
+      for (var i = 0; i < json.length; i++) {
+        // tr要素を生成
+        var tr = document.createElement('tr');
+        // th・td部分のループ
+        for (key in json[0]) {
+              // td要素を生成
+              var td = document.createElement('td');
+              // td要素内にテキストを追加
+              td.textContent = json[i][key];
+              // td要素をtr要素の子要素に追加
+              tr.appendChild(td);
+            }
+        // tr要素をtable要素の子要素に追加
+        table.appendChild(tr);
+        }
+      // 生成したtable要素を追加する
+      document.getElementById('maintable').appendChild(table);
+    </script>
+
+
+    <script>// ページング機能
+    jQuery(function($) {
+      var page = 0;
+      var displayrows = 30;// １ページ当たり表示する行の数
+
+      function draw() {// ページの表示
+        $('#lastpage').html(Math.ceil(($('tr').size()-1)/displayrows));
+        $('#currentpage').html(page + 1);
+        $('tr').hide();
+        $('tr:first,tr:gt(' + page * displayrows + '):lt(' + displayrows + ')').show();// 変数を使用する場合は' +  + 'を忘れずに
+      }
+      $('#prevbtn').click(function() {// １ページ後進
+        if (page > 0) {
+          page--;
+          draw();
+        }
+      });
+      $('#nextbtn').click(function() {// １ページ前進
+        if (page < ($('tr').size() - 1) /displayrows - 1) {
+          page++;
+          draw();
+        }
+      });
+      draw();//初回表示
+    });
+    </script>
+  </body>
+</html>

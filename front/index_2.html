@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テストページ</title>
+</head>
+<body>
+    <h1>こんにちは、世界！</h1>
+    <p>これはシンプルなHTMLドキュメントの例です。</p>
+    
+    <!-- ボタンとテキストボックスの追加 -->
+    <button id="fetchButton">データを取得</button>
+    <textarea id="resultBox" rows="10" cols="50"></textarea>
+
+    <table>
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>年齢</th>
+            <th>電話番号</th>
+          </tr>
+        </thead>
+        <tbody id="memberList"></tbody> //  ここにHTMLを生成
+      </table>
+    
+    <script>
+
+  
+        function getRequestToLocalhost() {
+            const memberList = document.getElementById("memberList");
+            const promise = fetch('http://localhost:4000/json');
+ 
+            //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
+            promise.then((response) => {
+            return response.json();
+            })
+            .then((data) => {
+            const reviewTextarea = document.getElementById('resultBox');
+            reviewTextarea.value = data;
+            addList(data);
+            console.log(data);
+            });
+        }
+
+        function addList(member){
+    const tr = document.createElement("tr");
+    memberList.appendChild(tr);
+    const objArray = Object.entries(member);
+    objArray.forEach((key) => {
+      const td = document.createElement("td");
+      td.textContent = key[1];
+      tr.appendChild(td);
+    });
+  }
+        
+        // ボタンクリックイベントの追加
+        document.getElementById('fetchButton').addEventListener('click', getRequestToLocalhost);
+    </script>
+</body>
+</html>
